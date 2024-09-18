@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import UniqueConstraint
 
 from airport_api_service import settings
 
@@ -124,6 +125,18 @@ class Ticket(models.Model):
         on_delete=models.CASCADE,
         related_name="tickets",
     )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=["row", "seat", "flight"],
+                name="unique_ticket_row_seat_flight",
+            ),
+        ]
+        ordering = ['row', 'seat',]
+
+    def __str__(self):
+        return f"Row: {self.row} Seat: {self.seat}, Flight: {self.flight}"
 
     @staticmethod
     def validate_seat(
