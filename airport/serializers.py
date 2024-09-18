@@ -26,6 +26,18 @@ class AirplaneSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "rows", "seats_in_row", "airplane_type", "capacity")
 
 
+class AirplaneRetrieveSerializer(AirplaneSerializer):
+    airplane_type = AirplaneTypeSerializer(many=False)
+
+
+class AirplaneListSerializer(AirplaneSerializer):
+    airplane_type = serializers.SlugRelatedField(
+        many=False,
+        read_only=True,
+        slug_field="name",
+    )
+
+
 class CrewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Crew
@@ -82,3 +94,8 @@ class TicketSerializer(serializers.ModelSerializer):
             serializers.ValidationError,
         )
         return attrs
+
+class TicketRetrieveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+
