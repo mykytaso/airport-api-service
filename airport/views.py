@@ -11,7 +11,6 @@ from airport.models import (
     Location,
     Order,
     Route,
-    Ticket,
 )
 
 from airport.serializers import (
