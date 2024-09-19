@@ -4,7 +4,7 @@ from airport.views import (
     AirplaneViewSet,
     CrewViewSet,
     CountryViewSet,
-    CityViewSet,
+    LocationViewSet,
     AirportViewSet,
     RouteViewSet,
     FlightViewSet,
@@ -22,7 +22,7 @@ router.register("airplane_types", AirplaneTypeViewSet,)
 router.register("airplanes", AirplaneViewSet)
 router.register("crews", CrewViewSet)
 router.register("countries", CountryViewSet)
-router.register("city", CityViewSet)
+router.register("locations", LocationViewSet)
 router.register("airports", AirportViewSet)
 router.register("routes", RouteViewSet)
 router.register("flights", FlightViewSet)
