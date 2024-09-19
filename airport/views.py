@@ -38,12 +38,12 @@ from airport.serializers import (
 
 
 class AirplaneTypeViewSet(viewsets.ModelViewSet):
-    queryset = AirplaneType.objects
+    queryset = AirplaneType.objects.all()
     serializer_class = AirplaneTypeSerializer
 
 
 class AirplaneViewSet(viewsets.ModelViewSet):
-    queryset = Airplane.objects
+    queryset = Airplane.objects.all()
     serializer_class = AirplaneSerializer
 
     def get_serializer_class(self):
@@ -61,17 +61,17 @@ class AirplaneViewSet(viewsets.ModelViewSet):
 
 
 class CrewViewSet(viewsets.ModelViewSet):
-    queryset = Crew.objects
+    queryset = Crew.objects.all()
     serializer_class = CrewSerializer
 
 
 class CountryViewSet(viewsets.ModelViewSet):
-    queryset = Country.objects
+    queryset = Country.objects.all()
     serializer_class = CountrySerializer
 
 
 class LocationViewSet(viewsets.ModelViewSet):
-    queryset = Location.objects
+    queryset = Location.objects.all()
     serializer_class = LocationSerializer
 
     def get_serializer_class(self):
@@ -89,7 +89,7 @@ class LocationViewSet(viewsets.ModelViewSet):
 
 
 class AirportViewSet(viewsets.ModelViewSet):
-    queryset = Airport.objects
+    queryset = Airport.objects.all()
     serializer_class = AirportSerializer
 
     def get_serializer_class(self):
@@ -107,7 +107,7 @@ class AirportViewSet(viewsets.ModelViewSet):
 
 
 class RouteViewSet(viewsets.ModelViewSet):
-    queryset = Route.objects
+    queryset = Route.objects.all()
     serializer_class = RouteSerializer
 
     def get_serializer_class(self):
@@ -125,7 +125,7 @@ class RouteViewSet(viewsets.ModelViewSet):
 
 
 class FlightViewSet(viewsets.ModelViewSet):
-    queryset = Flight.objects
+    queryset = Flight.objects.all()
     serializer_class = FlightSerializer
 
     def get_serializer_class(self):
@@ -156,7 +156,7 @@ class FlightViewSet(viewsets.ModelViewSet):
 
 
 class OrderViewSet(viewsets.ModelViewSet):
-    queryset = Order.objects
+    queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
     def get_queryset(self):
