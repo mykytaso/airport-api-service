@@ -26,7 +26,7 @@ class Airplane(models.Model):
         return self.rows * self.seats_in_row
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.airplane_type.name})"
 
 
 class Crew(models.Model):
@@ -42,19 +42,28 @@ class Crew(models.Model):
 
 
 class Country(models.Model):
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=64, unique=True)
 
     def __str__(self):
         return self.name
 
 
-class City(models.Model):
+class Location(models.Model):
     city = models.CharField(max_length=64)
     country = models.ForeignKey(
         Country,
         on_delete=models.CASCADE,
-        related_name="cities",
+        related_name="locations",
     )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=["city", "country",],
+                name="unique_location_city_country",
+            ),
+        ]
+        ordering = ["country__name", "city",]
 
     def __str__(self):
         return f"{self.city}, {self.country}"
@@ -63,10 +72,18 @@ class City(models.Model):
 class Airport(models.Model):
     name = models.CharField(max_length=64)
     location = models.ForeignKey(
-        City,
+        Location,
         on_delete=models.CASCADE,
         related_name="airports",
     )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=["name", "location",],
+                name="unique_airport_name_location",
+            ),
+        ]
 
     def __str__(self):
         return f"{self.name} ({self.location})"
@@ -115,6 +132,12 @@ class Order(models.Model):
         related_name="orders",
     )
 
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"Id: {self.id}, User: {self.user}, Created at: {self.created_at}"
+
 
 class Ticket(models.Model):
     row = models.IntegerField()
@@ -137,7 +160,11 @@ class Ticket(models.Model):
                 name="unique_ticket_row_seat_flight",
             ),
         ]
-        ordering = ['row', 'seat',]
+        ordering = ["row", "seat",]
+
+    @property
+    def row_and_seat(self):
+        return f"row: {self.row}, seat: {self.seat}"
 
     def __str__(self):
         return f"Row: {self.row} Seat: {self.seat}, Flight: {self.flight}"
