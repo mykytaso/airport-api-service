@@ -30,14 +30,11 @@ from airport.serializers import (
     LocationListSerializer,
     LocationRetrieveSerializer,
     LocationSerializer,
-    OrderListSerializer,
     OrderSerializer,
     RouteListSerializer,
     RouteRetrieveSerializer,
     RouteSerializer,
-    TicketListSerializer,
-    TicketRetrieveSerializer,
-    TicketSerializer,
+    OrderListRetrieveSerializer,
 )
 
 
@@ -145,18 +142,6 @@ class OrderViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
     def get_serializer_class(self):
-        if self.action == "list":
-            return OrderListSerializer
+        if self.action in ("list", "retrieve"):
+            return OrderListRetrieveSerializer
         return OrderSerializer
-
-
-class TicketViewSet(viewsets.ModelViewSet):
-    queryset = Ticket.objects.all()
-    serializer_class = TicketSerializer
-
-    def get_serializer_class(self):
-        if self.action == "list":
-            return TicketListSerializer
-        elif self.action == "retrieve":
-            return TicketRetrieveSerializer
-        return TicketSerializer

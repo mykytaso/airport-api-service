@@ -9,7 +9,6 @@ from airport.views import (
     RouteViewSet,
     FlightViewSet,
     OrderViewSet,
-    TicketViewSet,
 )
 
 from rest_framework import routers
@@ -27,7 +26,6 @@ router.register("airports", AirportViewSet)
 router.register("routes", RouteViewSet)
 router.register("flights", FlightViewSet)
 router.register("orders", OrderViewSet)
-router.register("tickets", TicketViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
