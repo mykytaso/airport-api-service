@@ -59,11 +59,11 @@ class Location(models.Model):
     class Meta:
         constraints = [
             UniqueConstraint(
-                fields=["city", "country",],
+                fields=["city", "country"],
                 name="unique_location_city_country",
             ),
         ]
-        ordering = ["country__name", "city",]
+        ordering = ["country__name", "city"]
 
     def __str__(self):
         return f"{self.city}, {self.country}"
@@ -80,7 +80,7 @@ class Airport(models.Model):
     class Meta:
         constraints = [
             UniqueConstraint(
-                fields=["name", "location",],
+                fields=["name", "location"],
                 name="unique_airport_name_location",
             ),
         ]
@@ -119,9 +119,9 @@ class Flight(models.Model):
     arrival_time = models.DateTimeField()
 
     def __str__(self):
-        return (f"{self.route.origin.location}: {self.departure_time} -> "
-                f"{self.route.destination.location}: {self.arrival_time}, "
-                f"Airplane: {self.airplane}")
+        return (f"{self.route.origin.location} -> "
+                f"{self.route.destination.location} | "
+                f"Departure: {self.departure_time}")
 
 
 class Order(models.Model):
@@ -136,7 +136,8 @@ class Order(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return f"Id: {self.id}, User: {self.user}, Created at: {self.created_at}"
+        return (f"Id: {self.id}, User: {self.user}, "
+                f"Created at: {self.created_at}")
 
 
 class Ticket(models.Model):
@@ -160,7 +161,7 @@ class Ticket(models.Model):
                 name="unique_ticket_row_seat_flight",
             ),
         ]
-        ordering = ["row", "seat",]
+        ordering = ["row", "seat"]
 
     @property
     def row_and_seat(self):
