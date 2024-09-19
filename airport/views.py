@@ -150,7 +150,7 @@ class FlightViewSet(viewsets.ModelViewSet):
                 ).order_by("id")
             )
         elif self.action == "retrieve":
-            queryset = queryset.select_related()
+            queryset = queryset.select_related().prefetch_related("crew")
 
         return queryset
 
