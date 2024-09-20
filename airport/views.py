@@ -1,3 +1,4 @@
+import rest_framework.permissions
 from django.db.models import Count, F
 from rest_framework import viewsets
 
@@ -158,6 +159,7 @@ class FlightViewSet(viewsets.ModelViewSet):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+    permission_classes = (rest_framework.permissions.IsAuthenticated,)
 
     def get_queryset(self):
         queryset = self.queryset.filter(user=self.request.user)
