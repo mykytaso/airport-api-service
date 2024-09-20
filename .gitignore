@@ -2,6 +2,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,django,pycharm+all
 
 airport/migrations
+user/migrations
 
 ### Django ###
 *.log
