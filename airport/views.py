@@ -1,6 +1,6 @@
 import rest_framework.permissions
 from django.db.models import Count, F
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 
 from airport.models import (
     Airplane,
@@ -156,7 +156,12 @@ class FlightViewSet(viewsets.ModelViewSet):
         return queryset
 
 
-class OrderViewSet(viewsets.ModelViewSet):
+class OrderViewSet(viewsets.GenericViewSet,
+                   mixins.ListModelMixin,
+                   mixins.RetrieveModelMixin,
+                   mixins.CreateModelMixin,
+                   mixins.DestroyModelMixin,
+                   ):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = (rest_framework.permissions.IsAuthenticated,)
