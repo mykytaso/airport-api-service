@@ -132,6 +132,18 @@ class AirportViewSet(viewsets.ModelViewSet):
             queryset = queryset.select_related()
         return queryset
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "city",
+                type={"city": "str"},
+                description="Filter airports by city name (ex. ?city=Berlin)",
+            )
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
 
 class RouteViewSet(viewsets.ModelViewSet):
     queryset = Route.objects.all()
