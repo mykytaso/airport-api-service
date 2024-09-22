@@ -1,5 +1,6 @@
 import rest_framework.permissions
 from django.db.models import Count, F
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, mixins
 
 from airport.models import (
@@ -48,6 +49,18 @@ class AirplaneTypeViewSet(viewsets.ModelViewSet):
         if airplane_type:
             queryset = queryset.filter(name__icontains=airplane_type)
         return queryset
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "type",
+                type={"type": "str"},
+                description="Filter by type name (ex. ?type=Aircraft)",
+            )
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class AirplaneViewSet(viewsets.ModelViewSet):
@@ -109,6 +122,12 @@ class AirportViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = self.queryset
+
+        cities = self.request.query_params.get("city", None)
+
+        if cities:
+            queryset = queryset.filter(location__city__icontains=cities)
+
         if self.action in ("list", "retrieve"):
             queryset = queryset.select_related()
         return queryset
