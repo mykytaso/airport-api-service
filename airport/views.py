@@ -42,6 +42,13 @@ class AirplaneTypeViewSet(viewsets.ModelViewSet):
     queryset = AirplaneType.objects.all()
     serializer_class = AirplaneTypeSerializer
 
+    def get_queryset(self):
+        queryset = self.queryset
+        airplane_type = self.request.query_params.get("type", None)
+        if airplane_type:
+            queryset = queryset.filter(name__icontains=airplane_type)
+        return queryset
+
 
 class AirplaneViewSet(viewsets.ModelViewSet):
     queryset = Airplane.objects.all()
