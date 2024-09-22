@@ -56,7 +56,7 @@ class AirplaneTypeViewSet(viewsets.ModelViewSet):
         parameters=[
             OpenApiParameter(
                 "type",
-                type={"type": "str"},
+                type=str,
                 description="Filter by type name (ex. ?type=Aircraft)",
             )
         ]
@@ -138,7 +138,7 @@ class AirportViewSet(viewsets.ModelViewSet):
         parameters=[
             OpenApiParameter(
                 "city",
-                type={"city": "str"},
+                type=str,
                 description="Filter airports by city name (ex. ?city=Berlin)",
             )
         ]
