@@ -45,9 +45,11 @@ class AirplaneTypeViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = self.queryset
+
         airplane_type = self.request.query_params.get("type", None)
         if airplane_type:
             queryset = queryset.filter(name__icontains=airplane_type)
+
         return queryset
 
     @extend_schema(
@@ -124,12 +126,12 @@ class AirportViewSet(viewsets.ModelViewSet):
         queryset = self.queryset
 
         cities = self.request.query_params.get("city", None)
-
         if cities:
             queryset = queryset.filter(location__city__icontains=cities)
 
         if self.action in ("list", "retrieve"):
             queryset = queryset.select_related()
+
         return queryset
 
     @extend_schema(
@@ -177,6 +179,18 @@ class FlightViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = self.queryset
 
+        origin = self.request.query_params.get("origin", None)
+        if origin:
+            queryset = queryset.filter(
+                route__origin__location__city__icontains=origin
+            )
+
+        destination = self.request.query_params.get("destination", None)
+        if destination:
+            queryset = queryset.filter(
+                route__destination__location__city__icontains=destination
+            )
+
         if self.action == "list":
             queryset = (
                 queryset
@@ -192,6 +206,26 @@ class FlightViewSet(viewsets.ModelViewSet):
             queryset = queryset.select_related().prefetch_related("crew")
 
         return queryset
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "origin",
+                type=str,
+                description="Filter flights by the origin "
+                            "city name (ex.: ?origin=Berlin)",
+            ),
+            OpenApiParameter(
+                "destination",
+                type=str,
+                description="Filter flights by the destination "
+                            "city name (ex.: ?destination=New-York)",
+
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class OrderViewSet(viewsets.GenericViewSet,
