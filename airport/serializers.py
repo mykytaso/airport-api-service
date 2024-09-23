@@ -31,7 +31,9 @@ class AirplaneSerializer(serializers.ModelSerializer):
             "seats_in_row",
             "airplane_type",
             "capacity",
+            "image"
         )
+        read_only_fields = ("image",)
 
 
 class AirplaneRetrieveSerializer(AirplaneSerializer):
@@ -44,6 +46,12 @@ class AirplaneListSerializer(AirplaneSerializer):
         read_only=True,
         slug_field="name",
     )
+
+
+class AirplaneImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Airplane
+        fields = ("id", "image")
 
 
 class CrewSerializer(serializers.ModelSerializer):
