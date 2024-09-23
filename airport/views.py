@@ -1,7 +1,10 @@
 import rest_framework.permissions
 from django.db.models import Count, F
 from drf_spectacular.utils import extend_schema, OpenApiParameter
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets, mixins, status
+from rest_framework.permissions import IsAdminUser
+from rest_framework.decorators import action as action_decorator
+from rest_framework.response import Response
 
 from airport.models import (
     Airplane,
@@ -16,6 +19,7 @@ from airport.models import (
 )
 
 from airport.serializers import (
+    AirplaneImageSerializer,
     AirplaneListSerializer,
     AirplaneRetrieveSerializer,
     AirplaneSerializer,
@@ -74,6 +78,8 @@ class AirplaneViewSet(viewsets.ModelViewSet):
             return AirplaneListSerializer
         elif self.action == "retrieve":
             return AirplaneRetrieveSerializer
+        elif self.action == "upload_image":
+            return AirplaneImageSerializer
         return AirplaneSerializer
 
     def get_queryset(self):
@@ -81,6 +87,19 @@ class AirplaneViewSet(viewsets.ModelViewSet):
         if self.action in ("list", "retrieve"):
             queryset = queryset.select_related("airplane_type")
         return queryset
+
+    @action_decorator(
+        methods=["POST"],
+        detail=True,
+        permission_classes=[IsAdminUser],
+        url_path="upload-image",
+    )
+    def upload_image(self, request, pk=None):
+        airplane = self.get_object()
+        serializer = self.get_serializer(airplane, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class CrewViewSet(viewsets.ModelViewSet):
