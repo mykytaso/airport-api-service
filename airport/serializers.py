@@ -200,7 +200,7 @@ class FlightRetrieveSerializer(serializers.ModelSerializer):
 class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
-        fields = ("id", "row", "seat", "flight",)
+        fields = ("row", "seat", "flight",)
 
     def validate(self, attrs):
         Ticket.validate_seat(
