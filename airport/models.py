@@ -121,18 +121,22 @@ class Route(models.Model):
                 name="unique_route_origin_destination",
             ),
         ]
-        ordering = ["id",]
+        ordering = ["id"]
 
     @staticmethod
-    def validate_origin_destination_not_be_the_same(origin, destination, error_to_raise):
+    def validate_origin_destination_not_be_the_same(
+            origin,
+            destination,
+            error_to_raise
+    ):
         if origin == destination:
             raise error_to_raise(
                 {
                     "origin": (
-                        f"Origin and destination should not be the same"
+                        "Origin and destination should not be the same"
                     ),
                     "destination": (
-                        f"Origin and destination should not be the same"
+                        "Origin and destination should not be the same"
                     )
                 }
             )
@@ -174,6 +178,46 @@ class Flight(models.Model):
     )
     departure_time = models.DateTimeField()
     arrival_time = models.DateTimeField()
+
+    @staticmethod
+    def validate_departure_time_not_later_arrival_time(
+            departure_time,
+            arrival_time,
+            error_to_raise
+    ):
+        if departure_time >= arrival_time:
+            raise error_to_raise(
+                {
+                    "departure_time": (
+                        "Departure time cannot be later than arrival time."
+                    ),
+                    "arrival_time": (
+                        "Departure time cannot be later than arrival time."
+                    )
+                }
+            )
+
+    def clean(self):
+        Flight.validate_departure_time_not_later_arrival_time(
+            self.departure_time,
+            self.arrival_time,
+            ValueError,
+        )
+
+    def save(
+            self,
+            force_insert=False,
+            force_update=False,
+            using=None,
+            update_fields=None,
+    ):
+        self.full_clean()
+        return super(Flight, self).save(
+            force_insert,
+            force_update,
+            using,
+            update_fields,
+        )
 
     def __str__(self):
         return (f"{self.route.origin.location} -> "
@@ -249,7 +293,7 @@ class Ticket(models.Model):
             raise error_to_raise(
                 {
                     "seat": (
-                        f"seat must be between 1 and {airplane_seats_in_row}, "
+                        f"Seat must be between 1 and {airplane_seats_in_row}, "
                         f"not {ticket_seat}"
                     )
                 }

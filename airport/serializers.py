@@ -141,6 +141,14 @@ class FlightSerializer(serializers.ModelSerializer):
             "arrival_time",
         )
 
+    def validate(self, attrs):
+        Flight.validate_departure_time_not_later_arrival_time(
+            attrs["departure_time"],
+            attrs["arrival_time"],
+            serializers.ValidationError,
+        )
+        return attrs
+
 
 class FlightListSerializer(serializers.ModelSerializer):
     airplane = serializers.CharField(source="airplane.__str__", read_only=True)
