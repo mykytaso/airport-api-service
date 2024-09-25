@@ -168,8 +168,8 @@ SIMPLE_JWT = {
 }
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "Bus Station API",
-    "DESCRIPTION": "Order tickets for your bus trip",
+    "TITLE": "Airport API",
+    "DESCRIPTION": "Order tickets for your airplane trip",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEM": False,
     "SWAGGER_UI_SETTINGS": {
