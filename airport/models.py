@@ -95,6 +95,7 @@ class Airport(models.Model):
                 name="unique_airport_name_location",
             ),
         ]
+        ordering = ["location__country__name", "location__city"]
 
     def __str__(self):
         return f"{self.name} ({self.location})"
@@ -121,6 +122,42 @@ class Route(models.Model):
             ),
         ]
         ordering = ["id",]
+
+    @staticmethod
+    def validate_origin_destination_not_be_the_same(origin, destination, error_to_raise):
+        if origin == destination:
+            raise error_to_raise(
+                {
+                    "origin": (
+                        f"Origin and destination should not be the same"
+                    ),
+                    "destination": (
+                        f"Origin and destination should not be the same"
+                    )
+                }
+            )
+
+    def clean(self):
+        Route.validate_origin_destination_not_be_the_same(
+            self.origin,
+            self.destination,
+            ValueError,
+        )
+
+    def save(
+            self,
+            force_insert=False,
+            force_update=False,
+            using=None,
+            update_fields=None,
+    ):
+        self.full_clean()
+        return super(Route, self).save(
+            force_insert,
+            force_update,
+            using,
+            update_fields,
+        )
 
     def __str__(self):
         return (f"{self.origin} -> {self.destination} "

@@ -107,6 +107,14 @@ class RouteSerializer(serializers.ModelSerializer):
         model = Route
         fields = ("id", "origin", "destination", "distance")
 
+    def validate(self, attrs):
+        Route.validate_origin_destination_not_be_the_same(
+            attrs["origin"],
+            attrs["destination"],
+            serializers.ValidationError,
+        )
+        return attrs
+
 
 class RouteListSerializer(RouteSerializer):
     origin = serializers.CharField(source="origin.__str__", read_only=False)
