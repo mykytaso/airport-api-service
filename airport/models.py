@@ -113,6 +113,15 @@ class Route(models.Model):
     )
     distance = models.IntegerField()
 
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=["origin", "destination"],
+                name="unique_route_origin_destination",
+            ),
+        ]
+        ordering = ["id",]
+
     def __str__(self):
         return (f"{self.origin} -> {self.destination} "
                 f"| Distance: {self.distance}")
