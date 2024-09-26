@@ -73,9 +73,9 @@ Foooooooo and can be freely used.
 After receiving the access token, you can use it to access the Airport API Service.<br>
 You can utilize it in [Postman](https://www.postman.com/) or with the [ModHeader](https://chromewebstore.google.com/detail/modheader-modify-http-hea/idgpnmonknjnojddfkpgkljpfnnfcklj?hl=en) extension for Google Chrome.
 
->**ModHeader Example:**<br>
-> Replace `<your token>` with your token.
-![ModHeader](docs/images/modheader.png)
+**ModHeader Example:**<br>
+Replace `<your token>` with your token.<br>
+<img src="docs/images/modheader.png" alt="ModHeader" width="460"/>
 
 ### Available Airport API Service endpoints:
 - To see all available endpoints: `/api/airport/`
