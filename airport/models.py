@@ -22,7 +22,7 @@ def airplane_image_path(instance: "Airplane", filename: str) -> pathlib.Path:
 
 
 class Airplane(models.Model):
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=64, unique=True)
     rows = models.IntegerField()
     seats_in_row = models.IntegerField()
     airplane_type = models.ForeignKey(
