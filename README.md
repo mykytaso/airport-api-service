@@ -3,11 +3,13 @@
 ## API service for airport management built with DRF and Dockerized
 
 
+
 This Airport API Service supports JWT authentication, email-based login, and an admin panel. Users can manage their own orders, while staff handle flights, routes, airplanes, etc. Key features include filtering, validation to prevent errors (e.g., overbooking, duplicate tickets), and secure data storage with Docker volumes. API documentation is available via Swagger and Redoc.
 
+<br>
 
 ## 📽️ &nbsp; YouTube Overview
-### [Watch the video](https://youtu.be/ms4_s28IR2k)
+### <a href="https://youtu.be/ms4_s28IR2k" target="_blank">Watch the video</a>
 > I recommend using at least 1.5x playback speed. 
 
 <br>
@@ -77,12 +79,15 @@ This Airport API Service supports JWT authentication, email-based login, and an 
 - View user information: `/api/user/me/`
 >**Example:** `http://127.0.0.1:8000/api/user/register/`
 
+
 After receiving the access token, you can use it to access the Airport API Service.<br>
 You can utilize it in [Postman](https://www.postman.com/) or with the [ModHeader](https://chromewebstore.google.com/detail/modheader-modify-http-hea/idgpnmonknjnojddfkpgkljpfnnfcklj?hl=en) extension for Google Chrome.
 
 **ModHeader Example:**<br>
 Replace `<your token>` with your token.<br>
 <img src="docs/images/modheader.png" alt="ModHeader" width="460"/>
+
+<br>
 
 ### Available Airport API Service endpoints:
 - To see all available endpoints: `/api/airport/`
