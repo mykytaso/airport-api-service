@@ -59,9 +59,8 @@ This Airport API Service supports JWT authentication, email-based login, and an 
     ```
 2. Create a `superuser` account to access the Airport API Service:
    ```shell
-    docker compose ps
-    docker exec -it <your_image_name> sh
-    docker-compose run app sh -c "python manage.py createsuperuser"
+    docker-compose ps
+    docker exec -it <container_name> python manage.py createsuperuser
    ```
     Follow the prompts to set the username, email, and password.
 
@@ -124,6 +123,7 @@ Replace `<your token>` with your token.<br>
 - Admin panel accessible at `/admin/`.
 - API documentation with Swagger and Redoc.
 - To prevent data loss, media files and the database are stored inside Docker volumes.
+- wait_for_db feature to ensure the database is ready before starting services.
 - Users can only view their own orders.
 - Manage orders and tickets for all registered users.
 - Create airplanes, locations, routes, flights and more for staff only.
