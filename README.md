@@ -2,8 +2,15 @@
 
 ## API service for airport management built with DRF and Dockerized
 
-Foooooooo and can be freely used.
 
+This Airport API Service supports JWT authentication, email-based login, and an admin panel. Users can manage their own orders, while staff handle flights, routes, airplanes, etc. Key features include filtering, validation to prevent errors (e.g., overbooking, duplicate tickets), and secure data storage with Docker volumes. API documentation is available via Swagger and Redoc.
+
+
+## 📽️ &nbsp; YouTube Overview
+### [Watch the video](https://youtu.be/ms4_s28IR2k)
+> I recommend using at least 1.5x playback speed. 
+
+<br>
 
 ## 🔌 &nbsp; GitHub Installation 
 
