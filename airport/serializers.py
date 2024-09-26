@@ -152,11 +152,6 @@ class FlightSerializer(serializers.ModelSerializer):
 
 class FlightListSerializer(serializers.ModelSerializer):
     airplane = serializers.CharField(source="airplane.__str__", read_only=True)
-    crew = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field="full_name",
-    )
     route = serializers.CharField(source="route.__str__", read_only=True)
     seats_available = serializers.IntegerField(read_only=True)
 
@@ -165,7 +160,6 @@ class FlightListSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "airplane",
-            "crew",
             "route",
             "departure_time",
             "arrival_time",
@@ -174,8 +168,12 @@ class FlightListSerializer(serializers.ModelSerializer):
 
 
 class FlightRetrieveSerializer(serializers.ModelSerializer):
-    airplane = AirplaneRetrieveSerializer(many=False, read_only=True)
-    crew = CrewSerializer(many=True, read_only=True)
+    airplane = AirplaneListSerializer(many=False, read_only=True)
+    crew = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field="full_name",
+    )
     route = RouteListSerializer(many=False, read_only=True)
     taken_seats = serializers.SlugRelatedField(
         many=True,
