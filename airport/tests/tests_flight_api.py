@@ -1,0 +1,353 @@
+from django.contrib.auth import get_user_model
+from django.test import TestCase
+from rest_framework import status
+from rest_framework.reverse import reverse
+from rest_framework.test import APIClient
+
+from airport.models import (
+    Airplane,
+    AirplaneType,
+    Airport,
+    Country,
+    Crew,
+    Flight,
+    Location,
+    Route
+)
+
+from airport.serializers import (
+    FlightListSerializer,
+    FlightRetrieveSerializer
+)
+
+FLIGHT_URL = reverse("airport:flight-list")
+
+
+def detail_url(flight_id):
+    return reverse("airport:flight-detail", args=(flight_id,))
+
+
+def sample_airplane_type(**params) -> AirplaneType:
+    defaults = {
+        "name": "Test_airplane_type",
+    }
+    defaults.update(params)
+    return AirplaneType.objects.create(**defaults)
+
+
+def sample_airplane() -> Airplane:
+    airplane = Airplane.objects.create(
+        name="Boeing 737 MAX",
+        rows=38,
+        seats_in_row=4,
+        airplane_type=sample_airplane_type(
+            name="Boeing Airplane"
+        )
+    )
+    return airplane
+
+
+def sample_crew(**params) -> Crew:
+    defaults = {
+        "first_name": "Test_first_name",
+        "last_name": "Test_last_name",
+    }
+    defaults.update(params)
+    return Crew.objects.create(**defaults)
+
+
+def sample_country(**params) -> Country:
+    defaults = {
+        "name": "Test_country",
+    }
+    defaults.update(params)
+    return Country.objects.create(**defaults)
+
+
+def sample_flight_uk_portugal() -> Flight:
+    airplane = Airplane.objects.create(
+        name="Airbus A321 Neo",
+        rows=54,
+        seats_in_row=6,
+        airplane_type=sample_airplane_type(name="Airbus Airplane")
+    )
+
+    location_uk = Location.objects.create(
+        city="London",
+        country=sample_country(name="United Kingdom"),
+    )
+    location_pt = Location.objects.create(
+        city="Porto",
+        country=sample_country(name="Portugal"),
+    )
+
+    origin_airport_uk = Airport.objects.create(
+        name="Heathrow",
+        location=location_uk
+    )
+    destination_airport_pt = Airport.objects.create(
+        name="Humberto Delgado",
+        location=location_pt
+    )
+
+    route_uk_pt = Route.objects.create(
+        origin=origin_airport_uk,
+        destination=destination_airport_pt,
+        distance=1380
+    )
+
+    flight_uk_pt = Flight.objects.create(
+        airplane=airplane,
+        route=route_uk_pt,
+        departure_time="2022-06-02T14:00:00Z",
+        arrival_time="2022-06-02T22:00:00Z",
+    )
+    flight_uk_pt.crew.set(
+        [
+            sample_crew(first_name="Winona", last_name="Ryder"),
+            sample_crew(first_name="Bill", last_name="Murray"),
+        ]
+    )
+    return flight_uk_pt
+
+
+def sample_route() -> Route:
+    location_fr = Location.objects.create(
+        city="Paris",
+        country=sample_country(name="France"),
+    )
+    location_it = Location.objects.create(
+        city="Rome",
+        country=sample_country(name="Italy"),
+    )
+
+    origin_airport_fr = Airport.objects.create(
+        name="Charles de Gaulle",
+        location=location_fr
+    )
+    destination_airport_it = Airport.objects.create(
+        name="Leonardo da Vinci–Fiumicino",
+        location=location_it
+    )
+
+    route_fr_it = Route.objects.create(
+        origin=origin_airport_fr,
+        destination=destination_airport_it,
+        distance=1380
+    )
+    return route_fr_it
+
+
+def sample_flight_paris_rome() -> Flight:
+    airplane = Airplane.objects.create(
+        name="Boeing 737 MAX",
+        rows=38,
+        seats_in_row=4,
+        airplane_type=sample_airplane_type(name="Boeing Airplane")
+    )
+
+    location_fr = Location.objects.create(
+        city="Paris",
+        country=sample_country(name="France"),
+    )
+    location_it = Location.objects.create(
+        city="Rome",
+        country=sample_country(name="Italy"),
+    )
+
+    origin_airport_fr = Airport.objects.create(
+        name="Charles de Gaulle",
+        location=location_fr
+    )
+    destination_airport_it = Airport.objects.create(
+        name="Leonardo da Vinci–Fiumicino",
+        location=location_it
+    )
+
+    route_fr_it = Route.objects.create(
+        origin=origin_airport_fr,
+        destination=destination_airport_it,
+        distance=1380
+    )
+
+    flight_fr_it = Flight.objects.create(
+        airplane=airplane,
+        route=route_fr_it,
+        departure_time="2022-08-03T13:00:00Z",
+        arrival_time="2022-08-03T21:00:00Z",
+    )
+    flight_fr_it.crew.set(
+        [
+            sample_crew(first_name="Johnny", last_name="Depp"),
+            sample_crew(first_name="Amber", last_name="Heard"),
+        ]
+    )
+    return flight_fr_it
+
+
+def add_seats_available_to_flights(flights, serializer) -> None:
+    """
+    This function adds the 'seats_available' key to flights
+    for comparison with response data, where 'seats_available' is automatically
+    generated by the FlightViewSet.
+    """
+    for number, flight in enumerate(flights):
+        seats_available = (
+            (flight.airplane.rows * flight.airplane.seats_in_row)
+            - flight.tickets.count())
+        serializer.data[number]["seats_available"] = seats_available
+
+
+class UnauthenticatedFlightApiTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+
+    def test_auth_required(self):
+        res = self.client.get(FLIGHT_URL)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class AuthenticatedFlightApiTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = get_user_model().objects.create_user(
+            email="test@email.com",
+            password="1qazcde3",
+            is_staff=False,
+        )
+        self.client.force_authenticate(self.user)
+
+    def test_auth_required(self):
+        sample_flight_uk_portugal()
+        sample_flight_paris_rome()
+
+        res = self.client.get(FLIGHT_URL)
+        flights = Flight.objects.all()
+        serializer = FlightListSerializer(flights, many=True)
+
+        add_seats_available_to_flights(
+            flights=flights,
+            serializer=serializer
+        )
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data["results"], serializer.data)
+
+    def test_filter_flights_by_origin_destination_cities(self):
+        sample_flight_uk_portugal()
+        sample_flight_paris_rome()
+
+        origin_filter_city = "London"
+        response_filter_origin = self.client.get(
+            FLIGHT_URL,
+            {
+                "origin": origin_filter_city
+            }
+        )
+        flights_filter_origin = Flight.objects.filter(
+            route__origin__location__city=origin_filter_city
+        )
+        serializer_filter_origin = FlightListSerializer(
+            flights_filter_origin,
+            many=True
+        )
+        add_seats_available_to_flights(
+            flights=flights_filter_origin,
+            serializer=serializer_filter_origin
+        )
+
+        origin_filter_city = "Paris"
+        destination_filter_city = "Rome"
+        response_filter_destination = self.client.get(
+            FLIGHT_URL,
+            {
+                "origin": origin_filter_city,
+                "destination": destination_filter_city
+            }
+        )
+        flights_filter_destination = Flight.objects.filter(
+            route__destination__location__city=destination_filter_city
+        )
+        serializer_filter_destination = FlightListSerializer(
+            flights_filter_destination,
+            many=True
+        )
+        add_seats_available_to_flights(
+            flights=flights_filter_destination,
+            serializer=serializer_filter_destination
+        )
+
+        self.assertEqual(
+            response_filter_origin.status_code,
+            status.HTTP_200_OK
+        )
+        self.assertEqual(
+            response_filter_origin.data["results"],
+            serializer_filter_origin.data
+        )
+
+        self.assertEqual(
+            response_filter_destination.status_code,
+            status.HTTP_200_OK
+        )
+        self.assertEqual(
+            response_filter_destination.data["results"],
+            serializer_filter_destination.data
+        )
+
+    def test_retrieve_flight_details(self):
+        sample_flight_uk_portugal()
+        flight = sample_flight_paris_rome()
+
+        url = detail_url(flight_id=flight.id)
+        res = self.client.get(url)
+
+        serializer = FlightRetrieveSerializer(flight)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data, serializer.data)
+
+    def test_create_flight(self):
+        payload = {
+            "airplane": sample_airplane().id,
+            "crew": [sample_crew().id, ],
+            "route": sample_route().id,
+            "departure_time": "2022-06-02T14:00:00Z",
+            "arrival_time": "2022-06-02T22:00:00Z",
+        }
+        res = self.client.post(FLIGHT_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class AdminFlightApiTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = get_user_model().objects.create_user(
+            email="admin@email.com",
+            password="1qazcde3",
+            is_staff=True,
+        )
+        self.client.force_authenticate(self.user)
+
+    def test_create_flight(self):
+        payload = {
+            "airplane": sample_airplane().id,
+            "crew": [sample_crew().id, ],
+            "route": sample_route().id,
+            "departure_time": "2022-06-02T14:00:00Z",
+            "arrival_time": "2022-06-02T22:00:00Z",
+        }
+        res = self.client.post(FLIGHT_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+    def test_delete_flight_not_allowed(self):
+        sample_flight_uk_portugal()
+        flight = sample_flight_paris_rome()
+
+        url = detail_url(flight.id)
+
+        res = self.client.delete(url)
+
+        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
