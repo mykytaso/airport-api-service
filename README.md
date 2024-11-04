@@ -8,13 +8,13 @@ This Airport API Service supports JWT authentication, email-based login, and an 
 
 <br>
 
-## 📽️ &nbsp; YouTube Overview
+## 🍿 &nbsp; YouTube Overview
 ### <a href="https://youtu.be/ms4_s28IR2k" target="_blank">Watch the video</a>
 > I recommend using at least 1.5x playback speed. 
 
 <br>
 
-## 🔌 &nbsp; GitHub Installation 
+## 📦 &nbsp; GitHub Installation 
 
 1. Install Python 3.12.
 
@@ -48,48 +48,59 @@ This Airport API Service supports JWT authentication, email-based login, and an 
 
 <br>
 
-## 🐳 &nbsp; Run with Docker
+## 📦 &nbsp; Installation with Docker
 
 > **Important:**  Make sure [Docker](https://www.docker.com/) is installed and running.
 
-1. Build and start the Docker containers:
+
+1. Set up environment variables:
+   - Create a `.env` file.
+   - Copy the content from `.env.sample` to `.env`.
+   - Update the values in `.env` with your specific configuration.
+
+
+2. Build and start the Docker containers:
     ```shell
-    docker-compose build
-    docker-compose up
+    docker-compose up -d --build
     ```
-2. Create a `superuser` account to access the Airport API Service:
+   
+3. Create a `superuser` account to access the Airport API Service:
    ```shell
-    docker-compose ps
-    docker exec -it <container_name> python manage.py createsuperuser
+     docker-compose exec airport python manage.py createsuperuser
    ```
-    Follow the prompts to set the username, email, and password.
+    Follow the prompts to set email, and password.
 
 
-3. Run tests:
+4. Run tests:
     ```shell
     docker-compose run airport sh -c "python manage.py test"
    ```
 <br>
 
-## 🔑 &nbsp; Getting Access
-### Available user endpoints:
-- Register a new user: `/api/user/register/`
-- Obtain refresh and access tokens: `/api/user/token/`
-- View user information: `/api/user/me/`
->**Example:** `http://127.0.0.1:8000/api/user/register/`
 
+## 🔓 &nbsp; Getting Access
 
-After receiving the access token, you can use it to access the Airport API Service.<br>
-You can utilize it in [Postman](https://www.postman.com/) or with the [ModHeader](https://chromewebstore.google.com/detail/modheader-modify-http-hea/idgpnmonknjnojddfkpgkljpfnnfcklj?hl=en) extension for Google Chrome.
+Use the `/api/user/token/` endpoint to obtain access token.
+
+The access token can be used in [Postman](https://www.postman.com/) or with the [ModHeader](https://chromewebstore.google.com/detail/modheader-modify-http-hea/idgpnmonknjnojddfkpgkljpfnnfcklj?hl=en) extension for Google Chrome.
 
 **ModHeader Example:**<br>
-Replace `<your token>` with your token.<br>
+Replace `<your token>` with your access token.<br>
 <img src="docs/images/modheader.png" alt="ModHeader" width="460"/>
 
 <br>
 
-### Available Airport API Service endpoints:
-- To see all available endpoints: `/api/airport/`
+## 📡 &nbsp; Available Endpoints
+
+- Admin panel: `/admin/`
+<br>
+
+- Register a new user: `/api/user/register/`
+- Obtain refresh and access tokens: `/api/user/token/`
+- Refresh token: `/api/user/token/refresh/`
+- Verify token: `/api/user/token/verify/`
+- View user information: `/api/user/me/`
+<br>
 
 
 - Airplane Types: `/api/airports/airplane_types/`
