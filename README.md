@@ -156,5 +156,5 @@ Replace `<your token>` with your access token.<br>
    
 <br>
 
-## 🖋️ &nbsp; Author
+## ✍️ &nbsp; Author
 <img src="https://github.com/mykyta-so.png" alt="@mykyta-so" width="24" height="24" valign="bottom" /> Mykyta Soloviov <a href="https://github.com/mykyta-so">@mykyta-so</a>
