@@ -1,10 +1,10 @@
-# Airport API Service
+# Airport Management API
 
 ## API service for airport management built with DRF and Dockerized
 
 
 
-This Airport API Service supports JWT authentication, email-based login, and an admin panel. Users can manage their own orders, while staff handle flights, routes, airplanes, etc. Key features include filtering, validation to prevent errors (e.g., overbooking, duplicate tickets), and secure data storage with Docker volumes. API documentation is available via Swagger and Redoc.
+This Airport Management API supports JWT authentication, email-based login, and an admin panel. Users can manage their own orders, while staff handle flights, routes, airplanes, etc. Key features include filtering, validation to prevent errors (e.g., overbooking, duplicate tickets), and secure data storage with Docker volumes. API documentation is available via Swagger and Redoc.
 
 <br>
 
@@ -20,8 +20,8 @@ This Airport API Service supports JWT authentication, email-based login, and an 
 
 2. Clone the repository and set up the virtual environment:
     ```shell
-    git clone https://github.com/mykyta-so/airport-api-service
-    cd airport-api-service
+    git clone https://github.com/mykyta-so/airport-management-api
+    cd airport-management-api
     python3 -m venv venv
     source venv/bin/activate (on macOS)
     venv\Scripts\activate (on Windows)
@@ -64,7 +64,7 @@ This Airport API Service supports JWT authentication, email-based login, and an 
     docker-compose up -d --build
     ```
    
-3. Create a `superuser` account to access the Airport API Service:
+3. Create a `superuser` account to access the Airport Management API:
    ```shell
      docker-compose exec airport python manage.py createsuperuser
    ```
